@@ -1,0 +1,91 @@
+nl_java_cp3
+
+no. 1
+public class Main {
+    public static void main(String[] args) {
+        throw new ExA(); // 이러면 에러남
+        throw new ExB(); // JVM이 에러를 잡지 않음 
+    }
+}
+
+class ExA extends Exception {
+
+}
+
+class ExB extends RuntimeException {
+
+}
+
+no.2
+nullPointException으로 바꾸어 주면 됨
+
+class Foo {
+    public void foo() {
+        System.out.println("foo");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Foo f = null;
+
+        try {
+            f.foo();
+        } catch (NullPointerException e) {
+            f = new Foo();
+        } finally {
+            f.foo();
+        }
+    }
+}
+
+no.3 
+public class Main {
+    public static void main(String[] args) {
+
+        System.out.println(1); // 걍 실행됨
+        try {
+            System.out.println(2); // 걍 실행됨
+            try {
+                foo();
+            } catch (RuntimeException e) {
+                System.out.println(3); // runtime exception이 발생하지 않음으로 실행 안됨
+            } catch (ExA e) {
+                System.out.println(4); // foo가 exA를 던짐으로 실행
+                throw new ExB();
+            } finally {
+                System.out.println(6); // 걍 실행됨
+            }
+        } catch (ExB e) {
+            System.out.println(7); // 아까 ExB가 던져졌기 때문에 실행됨
+        } catch (Throwable e) {
+            System.out.println(8); // 남은 exception이 없음으로 실행 않됨 
+        } finally {
+            System.out.println(9); // 그냥 실행됨 
+        }
+    }
+
+    private static void foo() throws ExA {
+        throw new ExA();
+    }
+}
+
+class ExA extends Exception {
+
+}
+
+class ExB extends RuntimeException {
+
+}
+
+no.4
+class Solution {
+    public int solution(int a, int b, int n) {
+        int result = 0;
+        while(n >= a){
+            result += b*(n / a);
+            n = b*(n / a) + (n % a);
+        }
+        return result;
+    }
+}
